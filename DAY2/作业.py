@@ -1,4 +1,3 @@
-
 '''
 查一下如何，打印颜色....
 '''
@@ -152,3 +151,82 @@ n1 先是指向 123456 字符串地址
 # 	'''
 # print(msg)
 
+# 11
+'''
+11 输入一年份，判断该年份是否是闰年并输出结果。（编程题）
+
+    注：凡符合下面两个条件之一的年份是闰年。
+   （1） 能被4整除但不能被100整除。 （2） 能被400整除。
+'''
+# year = int(input('请输入年份：'))
+# if year % 4 == 0 and not year % 100 == 0:
+# 	print(f'{year},是闰年')
+# elif year % 400 == 0  :
+# 	print(f'{year},是闰年')
+# else:
+# 	print(f'{year}不是闰年')
+
+
+'''
+12假设一年期定期利率为3.25%，
+计算一下需要过多少年，一万元的一年定期存款连本带息能翻番？
+'''
+# n = 0.00325
+# money = 10000
+# year = 0
+# while money <= 20000:
+# 	money  *= 1 + n
+# 	year += 1
+# print(str(year))
+
+# 13
+'''
+3 使用while,完成以下图形的输出
+    *
+    * *
+    * * *
+    * * * *
+    * * * * *
+    * * * *
+    * * *
+    * *
+    *
+'''
+# n = 1
+# while  n <= 9 :
+# 	print( n * '*')
+# 	while n >= 5 and n < 9 :
+# 		print('*'*(9-n))
+# 		n += 1
+# 	n += 1
+
+# count = 0
+# while count < 10 :
+# 	count += 1
+#
+# 	if count <= 5 :
+# 		print(count * ' * ')
+# 	elif count < 10 :
+# 		print((10 -count) * ' * ' )
+
+'''
+14
+    一球从100米高度自由落下，每次落地后反跳回原高度的一半；再落下，
+    求它在第10次落地时，共经过多少米？第10次反弹多高？
+'''
+# height = 100
+# times = 0
+# total = 0
+#
+# height = 100
+# times = 0
+# total = 0
+#
+# while times < 10 :
+# 	times += 1 # 经过的掉落时间
+# 	new_height =  height/2
+# 	total = 2* new_height # 本次经过的距离
+#
+# 	height = new_height # 高度被重置
+#
+# print(times,height,100+total)
