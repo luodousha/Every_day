@@ -16,23 +16,23 @@ while count <= 8:  # 总共取8个球，6个红球，2个篮球
 		select_number = input(f'\033[1;31;31m{msg}\033[0m')
 		if select_number.isdigit():  # 判断用户输入是否是数字的字符串
 			select_number = int(select_number)  # 将str类型转换为int类型
-			if select_number in select_red:
+			if select_number in select_red :
 				print(f'number {select_number} is already exist in red ball list')
 				continue
-			if select_number not in red_boll_list:
+			if not 0 < select_number < 33: # 判断大小比遍历列表效率高
 				print('only can select n  between 1-32 ')
 				continue
 			else:
 				select_red.append(select_number)
 		else:
-			print('type error')
-	
+			print('type error try again !')
+			continue
 	elif count < 9:  # 取篮球
 		msg = f'[{(count - 6)}]select blue boll:'
 		select_number = input(f'\033[1;34;34m{msg}\033[0m')
 		if select_number.isdigit():
 			select_number = int(select_number)
-			if select_number in select_blue:
+			if not 0 < select_number < 17:
 				print(f'number {select_number} is already exist in blue ball list')
 				continue
 			if select_number not in blue_boll_list:
@@ -41,7 +41,7 @@ while count <= 8:  # 总共取8个球，6个红球，2个篮球
 			else:
 				select_blue.append(select_number)
 		else:
-			print('type error')
+			print('type error try again !')
 			continue
 	count += 1
 
