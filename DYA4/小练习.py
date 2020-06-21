@@ -161,4 +161,45 @@ print(dic)
 出来
 '''
 # dic = {user_name:[username,age,phone,position ,salary]}
-
+dic = {}
+while True:
+	# print(dic)
+	print('欢迎进入员工查询系统'.center(50,'-'))
+	msg = '''
+	功能详情：
+			1：查询所有员工信息
+			2：添加新员工信息
+			3：查询某员工信息
+			4：退出
+	'''
+	print(msg,end='\t')
+	user = input('请选择功能：')
+	if user.isdigit():
+		user = int(user)
+		if user is 1:
+			for k in dic:
+				print(k,dic[k])
+		elif user is 2:
+			user_name = input('请输入新增员工')
+			age = int(input('请输出员工年纪'))
+			user_phone = input('请输入电话号码')
+			user_position = input('请输入员工职位')
+			user_salary = int(input('请输入薪资'))
+			# dic = {}
+			dic.setdefault(user_name, [user_name, age, user_phone, user_position, user_salary])
+			dic.update(dic)
+		elif user is 3:
+			user_name = input('请输入员工姓名：')
+			value = dic.get(user_name)
+			if not value:
+				print('不存在该员工！')
+			else:
+				print(value)
+		elif user is 4:
+			exit()
+		else:
+			print('待开发，请重现选择功能！')
+	else:
+		print('不存在此功能')
+		
+		
