@@ -65,6 +65,7 @@ while True:
                 print('已经没有数据，即将返回上一级')
                 time.sleep(1)
                 break
+            
             while True:
                 for k in menu[user_in]:
                     print(k)
