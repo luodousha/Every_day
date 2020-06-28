@@ -5,6 +5,7 @@ while True:
 		keys = keys.split(',')  # 得到一个keys列表
 		count = 0
 		user_in = input('股票查询程序接口>:')
+		
 		for line in f.readlines():
 			line = line.strip()  # 去空格
 			value = line.split(',')
@@ -12,14 +13,14 @@ while True:
 			if user_in in dic['名称']:
 				print(dic)
 				count += 1
-				# 程序出口
+		
 			elif user_in.upper() == 'Q':
 				print('Bay！')
 				exit()  # 退出程序
+			
 			for j in lis:
 				if j in user_in:
 					lis2 = user_in.split(j)  # 运算符分割字符串
-					# print(lis2)
 					if lis2[0] in ['换手率', '涨跌幅', '振幅', '成交量(手)', '成交额']:
 						new_value = dic[lis2[0]][:-1]  # 将数字后方的% ,万，忆 除去
 						s = new_value+j+lis2[1]  # 拼接字符串
@@ -28,7 +29,6 @@ while True:
 						exit()
 					else:
 						s = dic[lis2[0]] +j + lis2[1]
-						# print(s) # test 字符串
 					if eval(s):  # 将字符串执行
 						count += 1
 						print(dic)  # 输出查询结果
