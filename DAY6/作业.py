@@ -1,9 +1,9 @@
 # 题1
 # 1、请用代码实现：利用下划线将列表的每一个元素拼接成字符串，
 # li＝[‘alex’, ‘eric’, ‘rain’]
-li = ['alex','eric', 'rain']
-s = '_'.join(li) # 格式化+ 可迭代对象
-print(s)
+# li = ['alex','eric', 'rain']
+# s = '_'.join(li) # 格式化+ 可迭代对象
+# print(s)
 
 '''
 2、查找列表中元素，移除每个元素的空格，并查找以a或A开头并且以c结尾的所有元素。
@@ -75,6 +75,91 @@ for i in li :
 	print(i)
 '''
 
+'''
+4、写代码，有如下列表，请按照功能要求实现每一个功能
+
+li = ["hello", 'seven', ["mon", ["h", "kelly"], 'all'], 123, 446]
+请根据索引输出“Kelly”
+
+请使用索引找到’all’元素并将其修改为“ALL”，如：li[0][1][9]…
+'''
+# li = ["hello", 'seven', ["mon", ["h", "kelly"], 'all'], 123, 446]
+# # print(li[2][1][-1])
+# # li[2][2] = 'ALL'
+# # print(li)
+'''
+5、有如下变量，请实现要求的功能
+
+tu = ("alex", [11, 22, {"k1": 'v1', "k2": ["age", "name"], "k3": (11,22,33)}, 44])
+讲述元组的特性
+ # 元祖元素不能修改，元素有序不可变 ，假如可变类型嵌套在元祖里面，可以修改嵌套的元素
+请问tu变量中的第一个元素“alex”是否可被修改？
+# 不可以
+请问tu变量中的”k2”对应的值是什么类型？是否可以被修改？如果可以，请在其中添加一个元素“Seven”
+# 字符串类型 是 ,tu[1][2]['k3'] = 'Seven'
+请问tu变量中的”k3”对应的值是什么类型？是否可以被修改？如果可以，请在其中添加一个元素“Seven“
+元祖，不可以
+'''
+#
+# tu = ("alex", [11, 22, {"k1": 'v1', "k2": ["age", "name"], "k3": (11,22,33)}, 44])
+# tu[1][2]['k3'] = 'Seven'
+# print(tu)
+
+'''
+6、转换
+
+将字符串s = “alex”转换成列表
+lis = list(s)
+将字符串s = “alex”转换成元祖
+tu = tuple(s)
+将列表li = [“alex”, “seven”]转换成元组
+tu = tuple(li)
+将元组tu = (‘Alex’, “seven”)转换成列表
+li  = list(tu)
+将列表li = [“alex”, “seven”]转换成字典且字典的key按照10开始向后递增
+dic = dict(enumerate(li, 10))
+'''
+# lis = list(s)
+# print(lis)
+#
+# s = 'alex'
+# tu = tuple(s)
+# print(tu)
+#
+# li = ['alex', 'seven']
+# tu = tuple(li)
+# print(tu)
+#
+# li  = list(tu)
+# print(li)
 
 
+#将列表li = [“alex”, “seven”]转换成字典且字典的key按照10开始向后递增
+# li = ['alex', 'seven']
+# dic = dict(enumerate(li, 10))
+# print(dic)
 
+'''
+有如下值集合[11,22,33,44,55,66,77,88,99,90]，
+将所有大于66的值保存至字典的第一个key中，
+将小于66的值保存至第二个key的值中。
+即：{‘k1’:大于66的所有值, ‘k2’:小于66的所有值}。（编程题）
+'''
+# dic = {'k1':[], 'k2':[]}
+# # lis = [11,22,33,44,55,66,77,88,99,90]
+# # for i in lis:
+# # 	if i > 66:
+# # 		dic['k1'].append(i)
+# # 	else:
+# # 		dic['k2'].append(i)
+# # print(dic)
+
+# 8、在不改变列表数据结构的情况下找最大值
+li = [1,3,2,7,6,23,41,243,33,85,56]
+# max_num = max(li)
+# print(max_num)
+max_num = li[0]
+for i in li :
+	if i>max_num:
+		max_num=i
+print(max_num)
