@@ -39,7 +39,7 @@ while count > 0:
 				if count == 1:
 					print('密码输错三次，用户即将被锁定')
 					user_info[-1] = 1
-					f2 = open('user_info.txt.new', 'w', encoding='utf-8')
+					f2 = open('user_info.txt.txt.new', 'w', encoding='utf-8')
 					f.seek(0)
 					for line in f:
 						if user_name in line.strip():
@@ -48,7 +48,7 @@ while count > 0:
 					f2.flush()
 					f2.close()
 					f.close()
-					os.replace('user_info.txt.new', 'user_info.txt')
+					os.replace('user_info.txt.txt.new', 'user_info.txt.txt')
 					print('用户已被锁定,即将退出...')
 					exit()
 			elif user_info[0] == user_name and user_info[1] == user_password:
