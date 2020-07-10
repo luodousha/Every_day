@@ -85,35 +85,56 @@
 # 	func(v)
 
 
-dic = {'1': {'id': '1', 'name': 'Alex Li', 'age': '22', 'phone': '13651054608', 'dept': 'IT', 'data': '2013-04-01'}, '2': {'id': '2', 'name': 'Jack Wang', 'age': '28', 'phone': '13451024608', 'dept': 'HR', 'data': '2015-01-07'}, '3': {'id': '3', 'name': 'Rain Wang', 'age': '21', 'phone': '13451054608', 'dept': 'IT', 'data': '2017-04-01'}, '4': {'id': '4', 'name': 'Mack Qiao', 'age': '44', 'phone': '15653354208', 'dept': 'Sales', 'data': '2016-02-01'}, '5': {'id': '5', 'name': 'Rachel Chen', 'age': '23', 'phone': '13351024606', 'dept': 'IT', 'data': '2013-03-16'}, '6': {'id': '6', 'name': 'Eric Liu', 'age': '19', 'phone': '18531054602', 'dept': 'Marketing', 'data': '2012-12-01'}, '7': {'id': '7', 'name': 'Chao Zhang', 'age': '21', 'phone': '13235324334', 'dept': 'Administration', 'data': '2011-08-08'}, '8': {'id': '8', 'name': 'Kevin Chen', 'age': '22', 'phone': '13151054603', 'dept': 'Sales', 'data': '2013-04-01'}, '9': {'id': '9', 'name': 'Shit Wen', 'age': '20', 'phone': '13351024602', 'dept': 'IT', 'data': '2017-07-03'}, '10': {'id': '10', 'name': 'Shanshan Du', 'age': '26', 'phone': '13698424612', 'dept': 'Operation', 'data': '2017-07-02'}}
-keys = ['name', 'age']
+# dic = {'1': {'id': '1', 'name': 'Alex Li', 'age': '22', 'phone': '13651054608', 'dept': 'IT', 'data': '2013-04-01'}, '2': {'id': '2', 'name': 'Jack Wang', 'age': '28', 'phone': '13451024608', 'dept': 'HR', 'data': '2015-01-07'}, '3': {'id': '3', 'name': 'Rain Wang', 'age': '21', 'phone': '13451054608', 'dept': 'IT', 'data': '2017-04-01'}, '4': {'id': '4', 'name': 'Mack Qiao', 'age': '44', 'phone': '15653354208', 'dept': 'Sales', 'data': '2016-02-01'}, '5': {'id': '5', 'name': 'Rachel Chen', 'age': '23', 'phone': '13351024606', 'dept': 'IT', 'data': '2013-03-16'}, '6': {'id': '6', 'name': 'Eric Liu', 'age': '19', 'phone': '18531054602', 'dept': 'Marketing', 'data': '2012-12-01'}, '7': {'id': '7', 'name': 'Chao Zhang', 'age': '21', 'phone': '13235324334', 'dept': 'Administration', 'data': '2011-08-08'}, '8': {'id': '8', 'name': 'Kevin Chen', 'age': '22', 'phone': '13151054603', 'dept': 'Sales', 'data': '2013-04-01'}, '9': {'id': '9', 'name': 'Shit Wen', 'age': '20', 'phone': '13351024602', 'dept': 'IT', 'data': '2017-07-03'}, '10': {'id': '10', 'name': 'Shanshan Du', 'age': '26', 'phone': '13698424612', 'dept': 'Operation', 'data': '2017-07-02'}}
+# keys = ['name', 'age']
 
 
-def func():
-	lis = []
-	for v in dic.values():
-		def inter(v):
-			dic = {}
-			for i in keys:
-				dic[i]=v[i]
-			return dic
-		ret=inter(v)
-		lis.append(ret)
-	return lis
-
-def display(dic):
-	'''
-	传入筛查后字典显示数据
-	:param dis:
-	:return:
-	'''
-	for k,v in dic.items():
-		print(k, v, end=' ')
-	print()
-
-for dic in func():
-	display(dic)
+# def func():
+# 	lis = []
+# 	for v in dic.values():
+# 		def inter(v):
+# 			dic = {}
+# 			for i in keys:
+# 				dic[i]=v[i]
+# 			return dic
+# 		ret=inter(v)
+# 		lis.append(ret)
+# 	return lis
+#
+# def display(dic):
+# 	'''
+# 	传入筛查后字典显示数据
+# 	:param dis:
+# 	:return:
+# 	'''
+# 	for k,v in dic.items():
+# 		print(k, v, end=' ')
+# 	print()
+#
+# for dic in func():
+# 	display(dic)
 	
 # find name,age from staff_table where data like "2013"
 #
 # update staff_table set age=25 where name = "Alex Li"
+# s = r'find age,name,id from staff_table where name = "Alex Li"      '
+# s=s.strip()
+# print(s.count(' '))
+#
+# print(l)
+# for i  in l :
+# 	print(i)
+s='update staff_table set age=25 where name = "Alex Li"'
+s = 'find * from staff_table where age > 22'
+
+print(s.index('where'))
+print(s[30:])
+if 'name' in s[30:]:
+	l = s.split(' ', s.count(' ') - 1)
+	# print(l)
+else:
+	l = s.split(' ')
+print(l)
+
+
+# find * from staff_table where dept = "IT"

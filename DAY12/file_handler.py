@@ -9,12 +9,14 @@ def check_user_in():
 	检查用户输入合理性
 	:return:
 	'''
-	select_order = ('find', 'add', 'del', 'update') # 用户输入首单词必须由此元组元素构成
+	select_order = ('find', 'add', 'del', 'update')  # 用户输入首单词必须由此元组元素构成
 	while True:
-		user_in = input('请输入命令>>>>>（按q退出程序）')
+		user_in = input(r'请输入命令>>>>>（按q退出程序）')
 		user_in_str = formart_str(user_in)  # 处理用户关键字间多余的空格，并返回以一个空格为间隔的字符串
 		# print(user_in_str)  #测试 user_in_str 字符串
-		keywords_list = user_in_str.strip().split(' ')
+		keywords_str = user_in_str.strip()
+		keywords_list = deal_with_user_in(keywords_str)
+		# print(keywords_list)
 		# print(keywords_list)  # test 测试 用户关键字列表
 		if not user_in.strip():
 			print('不允许输入空值')
@@ -71,14 +73,14 @@ def del_user(*args,**kwargs):
 	'''
 	try:
 		dis_info = read_user_data()
-		print(kwargs['str_lis'])
+		# print(kwargs['str_lis'])
 		key = kwargs['str_lis'][-1]
 		dis_info.pop(key)
 		del_data(key)
 		check_user_in()
 	except KeyError as e:
 		print(e)
-	
+	run()
 	
 def update_user(*args,**kwargs):
 	'''
@@ -86,17 +88,40 @@ def update_user(*args,**kwargs):
 	:return:
 	'''
 	dis_info = read_user_data()
-	print('修改属性')
-	print(kwargs['str_lis'])
-	index = kwargs['str_lis'].index('where')
-	lis_ = kwargs['str_lis'][index:]
+	# print('修改属性')
+	# print(kwargs['str_lis'])
+	index_where = kwargs['str_lis'].index('where')
+	index_set = kwargs['str_lis'].index('set')
+	# print(index_set)
+	alter_lis = kwargs['str_lis'][index_set+1].split('=') # 获取修改参数的下标
+	new_str = wipe_mark(alter_lis[1])
+	old_str = wipe_mark(kwargs['str_lis'][-1])
+	lis_ = kwargs['str_lis'][index_where:]
 	ret = compare_str(lis_, dis_info)
-	for dic in ret:
-		print(dic)
+	# print(ret)
+	with open('staff_table_new', 'w', encoding='utf-8')as f:
+		with open('staff_table', 'r', encoding='utf-8')as f2:
+			for line in f2:
+				# print(line.strip())
+				if old_str in line.strip():
+					line = line.replace(old_str, new_str)
+				else:
+					line = line
+				f.write(line)
+			f2.close()
+	f.close()
+	os.replace('staff_table_new', 'staff_table')
+	run()
 	
 	
 def find_user_info(*args,**kwargs):
-	# print(kwargs)  # 接收用户的输入字符串
+	'''
+	查询用户输入
+	:param args:
+	:param kwargs:
+	:return:
+	'''
+	# print(kwargs)  # test接收用户的输入
 	dic_info = read_user_data()
 	if kwargs['str_lis'][1] == '*':  # 拿所有数据匹配
 		if kwargs['str_lis'][-1] == 'staff_table':  # 没有筛查条件的情况
@@ -108,14 +133,18 @@ def find_user_info(*args,**kwargs):
 			compare_str(lis_, dic_info)  # 这里要写一个判断的函数将筛查条件传入
 			
 	else:  # 筛查列表是其他参数,不是 * 的情况
-		keys = kwargs['str_lis'][1].split(',')  # 拿到筛查的keys [name.age]
+		if len(kwargs['str_lis'][1]) > 1:
+			keys = kwargs['str_lis'][1].split(',')  # 拿到筛查的keys [name,age]
+		else:
+			keys = kwargs['str_lis'][1]
 		if kwargs['str_lis'][-1] == 'staff_table':  # 不加筛查条件
 			for dic in filter_key(keys, dic_info):  # 将要显示的字段筛选后输出
 				display(dic)
-		
-		if 'where' in kwargs['str_lis']:  # 加筛查条件
+
+		elif 'where' in kwargs['str_lis']:  # 有参数列表有筛查条件
 			index = kwargs['str_lis'].index('where')  # 切割'where'至筛查条件
 			lis_ = kwargs['str_lis'][index:]  # ['where', 'age', '>', '26']
+			# print(keys)
 			compare_str(lis_, dic_info, keys_lis=keys)  # 这里要写一个判断的函数将筛查条件传入
 			
 		
@@ -125,39 +154,47 @@ def compare_str(lis, dic_info, keys_lis=None):
 	:param lis: 筛查条件列表 例如['where' , 'age' , '>' ,'26' ]
 	:param dic_info: 所有数据字典格式
 	:param keys_lis: 筛查所需字段的列表
-	:return:
+	:return: 返回筛查字典
 	'''
 	value_lis = []
 	if keys_lis == None:  # 判断有没有过滤字段
 		for v in dic_info.values():
-			data_value = v.get(lis[1])  # 对应的值，age--> 28 ,name --> 'alex'
+			data_value = v.get(lis[1])  # 获取关键字
 			# print(data_value)
-			if 'like' in lis:
+			if 'like' in lis:  # 判断是否是有关键字'like'
 				# print('模糊查询...')
-				if wipe_mark(lis[3]) in data_value:
+				if wipe_mark(lis[3]) in data_value:  # 将双引号，单引号去除
 					display(v)
 			elif data_value.isdigit():  # 数据类型是数字字符串的时候
+				print(type(data_value))
+				
 				if lis[2] == '>':
 					if int(data_value)-int(lis[3]) > 0:  # 满足筛查条件
 						display(v)
+				
 				elif lis[2] == '<':
 					if int(data_value) - int(lis[3]) < 0:
 						display(v)
 
 				elif lis[2] == '>=':
-					if int(data_value)-int(lis[3]) >= 0:  # 满足筛查条件
+					if int(data_value)-int(lis[3]) >= 0:
 						display(v)
+				
 				elif lis[2] == '<=':
 					if int(data_value) - int(lis[3]) <= 0:
 						display(v)
+			
 			elif lis[1].isalpha():  # 判断字符串是否是一至的情况
 				if lis[2] == '=':
 					str = wipe_mark(lis[3])  # 将双引号，或是单引号去掉
+					# str = wipe_mark(str)    # 例如"'Alex Li'" 有两层单双引号，都将其去除
+					# print(str)
 					if data_value == str:
 						display(v)
-						value_lis.append(v)
-	return value_lis
-	if keys_lis:  # 判断有没有关键字列表,有就筛选显示字段
+						value_lis.append(v)  # 将符合条件的数据添加到列表中
+		return value_lis  # 返回字符串一至的所有数据 比如返回 部门都是'IT'
+	
+	if keys_lis:  # 判断有没有关键字列表,只显示关键字字段 如只显示 name,age 字段内容
 		for v in dic_info.values():
 			data_value = v.get(lis[1])
 			if 'like' in lis:
@@ -178,12 +215,16 @@ def compare_str(lis, dic_info, keys_lis=None):
 					if int(data_value) - int(lis[3]) <= 0:
 						display(dic_info, keys_lis=keys_lis, value=v)
 			elif lis[1].isalpha():  # 判断字符串是否是一至的情况
+				# print(lis)
 				if lis[2] == '=':
 					str = wipe_mark(lis[3])  # 将双引号，或是单引号去掉
+					# print(str)
 					if data_value == str:
 						display(dic_info, keys_lis=keys_lis, value=v)
-				
-
+						value_lis.append(v)
+		return value_lis
+	
+	
 def wipe_mark(str):
 	"""
 	将字符串的双引号，或单引号去除
@@ -204,7 +245,8 @@ def formart_str(str):
 	:return: 返回一个只有一个空格隔开的str
 	'''
 	str_lis = str.split(' ')
-	str_lis2 = str_lis[:] # 遍历原列表删除新列表
+	# print(str_lis)
+	str_lis2 = str_lis[:]  # 遍历原列表删除新列表
 	for i in str_lis:
 		if i == '':
 			str_lis2.remove(i)
@@ -219,11 +261,11 @@ def read_user_data():
 	'''
 	dic_info = {}  # 以字典的形式保存用户信息
 	# colume_lis = ['id', 'name', 'age', 'phone', 'enroll_dept', 'date']  # 字段列表
-	with open('staff_table','r',encoding='utf-8') as f:
+	with open('staff_table', 'r', encoding='utf-8') as f:
 		line = f.readlines()
 		for i in line:
 			value = i.strip().split(',')
-			dic_info[value[0]] = {x : y for x, y in zip(colume_lis, value)}
+			dic_info[value[0]] = {x: y for x, y in zip(colume_lis, value)}
 		# print(dic_info)
 	return dic_info
 
@@ -240,7 +282,7 @@ def add_data(str):
 	
 def del_data(key):
 	with open('staff_table', 'r', encoding='utf-8') as f:
-		with open('staff_table_new','w',encoding='utf-8')as f2:
+		with open('staff_table_new', 'w', encoding='utf-8')as f2:
 			for line in f:
 				lis = line.split(',')
 				if lis[0] == key:
@@ -249,7 +291,7 @@ def del_data(key):
 					f2.write(line)
 		f2.close()
 	f.close()
-	os.replace('staff_table_new','staff_table')
+	os.replace('staff_table_new', 'staff_table')
 
 
 def filter_key(keys, dic_info):
@@ -271,7 +313,28 @@ def filter_key(keys, dic_info):
 	return lis  # 返回筛选字段组成的字典的列表类型
 
 
-def display(dic_info,keys_lis=None,value=None):
+def deal_with_user_in(str):
+	'''
+	处理输入字符串最后的元素包含空格符情况
+	:param str: 用户输入字符串
+	:return: 保留最后一个空格的字符串
+	'''
+	# print(str)
+	str = str.strip()  # 去除两边空白
+	space_num = str.count(' ')  # 统计空格次数
+	if 'where' in str:
+		where_index = str.index('where')
+		if 'name' in str[where_index:]:
+			str = str.split(' ',space_num-1)
+		else:
+			str = str.split(' ')
+		return str
+	else:
+		str = str.split(' ')
+		return str
+
+
+def display(dic_info, keys_lis=None, value=None):
 	'''
 	显示字段
 	:param dic_info: 所有数据的字典集合
@@ -306,11 +369,12 @@ def verify_phone(lis):
 
 def run():
 	'''
-	主函数
+	运行函数
 	:return:
 	'''
 	check_user_in()
 
 
 run()
+
 
