@@ -29,44 +29,44 @@ def check_user_in():
 				find_user_info(str_lis=keywords_list)  # 将用户查询语句传入
 			
 			elif user_in.startswith('add'):
-				add_user(str_lis = keywords_list)
-				
+				add_user(str_lis=keywords_list)
+			
 			elif user_in.startswith('del'):
-				del_user(str_lis= keywords_list)
-				
+				del_user(str_lis=keywords_list)
+			
 			elif user_in.startswith('update'):
 				update_user(str_lis=keywords_list)
-				
+		
 		else:
 			print('关键字错误，请重试....')
-	
-		
-def add_user(*args,**kwargs):
+
+
+def add_user(*args, **kwargs):
 	'''
 	添加用户信息
 	:return:
 	'''
 	dic_info = read_user_data()
 	# print('添加用户')
-	dic_value=kwargs['str_lis'][2]
+	dic_value = kwargs['str_lis'][2]
 	dic_value_lis = dic_value.split(',')
 	if len(dic_value_lis) == 5:
 		if verify_phone(dic_value_lis):
 			lis = list(dic_info.keys())  # ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10']
-			max_id = int(lis[-1])+1
+			max_id = int(lis[-1]) + 1
 			dic_value_lis.insert(0, str(max_id))
 			new_dic_info = {x: y for x, y in zip(colume_lis, dic_value_lis)}
 			data_str_lis = list(new_dic_info.values())
-			s = ','.join(data_str_lis)+'\n'
+			s = ','.join(data_str_lis) + '\n'
 			add_data(s)
 			check_user_in()
 		else:
 			print('电话号码重复')
 	else:
 		print('缺少足够参数')
-		
-	
-def del_user(*args,**kwargs):
+
+
+def del_user(*args, **kwargs):
 	'''
 	根据序号删除相应的员工的信息
 	:return:
@@ -78,12 +78,13 @@ def del_user(*args,**kwargs):
 		dis_info.pop(key)
 		del_data(key)
 		check_user_in()
-	except KeyError as e:
-		print(e)
-	run()
-	
+	except KeyError:
+		print('不存在数据...')
+	finally:
+		run()
 
-def update_user(*args,**kwargs):
+
+def update_user(*args, **kwargs):
 	'''
 	可以根据特殊条件修改员工信息
 	:return:
@@ -94,31 +95,33 @@ def update_user(*args,**kwargs):
 	index_where = kwargs['str_lis'].index('where')
 	index_set = kwargs['str_lis'].index('set')
 	# print(index_set)
-	alter_lis = kwargs['str_lis'][index_set+1].split('=')  # 获取修改参数的下标
-	new_str = wipe_mark(alter_lis[1])
-	alter = wipe_mark(alter_lis[0])
+	alter_lis = kwargs['str_lis'][index_set + 1].split('=')  # 获取修改参数的下标
+	new_str = wipe_mark(alter_lis[1])  # 修改后的数据
+	alter = wipe_mark(alter_lis[0])  # 需要修改的字段
 	# print(alter)
-	old_str = wipe_mark(kwargs['str_lis'][-1])
+	old_str = wipe_mark(kwargs['str_lis'][-1])  # 要修改的数据
 	# print(new_str, old_str)
 	lis_ = kwargs['str_lis'][index_where:]
-	ret = compare_str(lis_, dis_info)  # 符合查询条件的数据集合
-	with open('staff_table', 'r', encoding='utf-8')as f:
-		with open('staff_table_new', 'w', encoding='utf-8')as f2:
-			for line in f:
-				line = line.strip()
-				for v in ret:
-					if v[alter] in line:
-						v[alter] = new_str
-						s = ','.join(v.values())
-						line = line.replace(line, s)
-				else:
-					line = line
-				f2.write(line+'\n')
-				
-	# os.replace('staff_table_new','staff_table')
-	
-	
-def find_user_info(*args,**kwargs):
+	ret = compare_str(lis_, dis_info)
+	# with open('staff_table', 'r', encoding='utf-8')as f:
+	f = open_file('r')
+	f2 = open_file('w')
+	for line in f:
+		line = line.strip()
+		for v in ret:
+			if v[alter] in line:
+				v[alter] = new_str
+				s = ','.join(v.values())
+				line = line.replace(line, s)
+		else:
+			line = line
+		f2.write(line + '\n')
+	f2.close()
+	f.close()
+	# os.replace('staff_table_new', 'staff_table') # 将新文件文件名修改为原文件
+
+
+def find_user_info(*args, **kwargs):
 	'''
 	查询用户输入
 	:param args:
@@ -135,7 +138,7 @@ def find_user_info(*args,**kwargs):
 			index = kwargs['str_lis'].index('where')  # 切割'where'至筛查条件
 			lis_ = kwargs['str_lis'][index:]  # ['where', 'age', '>', '26']
 			compare_str(lis_, dic_info)  # 这里要写一个判断的函数将筛查条件传入
-			
+	
 	else:  # 筛查列表是其他参数,不是 * 的情况
 		if len(kwargs['str_lis'][1]) > 1:
 			keys = kwargs['str_lis'][1].split(',')  # 拿到筛查的keys [name,age]
@@ -144,23 +147,23 @@ def find_user_info(*args,**kwargs):
 		if kwargs['str_lis'][-1] == 'staff_table':  # 不加筛查条件
 			for dic in filter_key(keys, dic_info):  # 将要显示的字段筛选后输出
 				display(dic)
-
+		
 		elif 'where' in kwargs['str_lis']:  # 有参数列表有筛查条件
 			index = kwargs['str_lis'].index('where')  # 切割'where'至筛查条件
 			lis_ = kwargs['str_lis'][index:]  # ['where', 'age', '>', '26']
 			# print(keys)
 			compare_str(lis_, dic_info, keys_lis=keys)  # 这里要写一个判断的函数将筛查条件传入
-			
-		
+
+
 def compare_str(lis, dic_info, keys_lis=None):
 	'''
 	判断where 条件
 	:param lis: 筛查条件列表 例如['where' , 'age' , '>' ,'26' ]
 	:param dic_info: 所有数据字典格式
 	:param keys_lis: 筛查所需字段的列表
-	:return: 返回筛查后字典列表
+	:return: 返回筛查字典
 	'''
-	date_lis = []
+	value_lis = []
 	if keys_lis == None:  # 判断有没有过滤字段
 		for v in dic_info.values():
 			data_value = v.get(lis[1])  # 获取关键字
@@ -170,18 +173,17 @@ def compare_str(lis, dic_info, keys_lis=None):
 				if wipe_mark(lis[3]) in data_value:  # 将双引号，单引号去除
 					display(v)
 			elif data_value.isdigit():  # 数据类型是数字字符串的时候
-				print(type(data_value))
 				
 				if lis[2] == '>':
-					if int(data_value)-int(lis[3]) > 0:  # 满足筛查条件
+					if int(data_value) - int(lis[3]) > 0:  # 满足筛查条件
 						display(v)
 				
 				elif lis[2] == '<':
 					if int(data_value) - int(lis[3]) < 0:
 						display(v)
-
+				
 				elif lis[2] == '>=':
-					if int(data_value)-int(lis[3]) >= 0:
+					if int(data_value) - int(lis[3]) >= 0:
 						display(v)
 				
 				elif lis[2] == '<=':
@@ -195,8 +197,8 @@ def compare_str(lis, dic_info, keys_lis=None):
 					# print(str)
 					if data_value == str:
 						display(v)
-						date_lis.append(v)  # 将符合条件的数据添加到列表中
-		return date_lis  # 返回字符串一至的所有数据 比如返回 部门都是'IT'
+						value_lis.append(v)  # 将符合条件的数据添加到列表中
+		return value_lis  # 返回字符串一至的所有数据 比如返回 部门都是'IT'
 	
 	if keys_lis:  # 判断有没有关键字列表,只显示关键字字段 如只显示 name,age 字段内容
 		for v in dic_info.values():
@@ -206,14 +208,14 @@ def compare_str(lis, dic_info, keys_lis=None):
 					display(dic_info, keys_lis=keys_lis, value=v)
 			elif data_value.isdigit():  # 数据类型是数字字符串的时候
 				if lis[2] == '>':
-					if int(data_value)-int(lis[3]) > 0:  # 满足筛查条件
+					if int(data_value) - int(lis[3]) > 0:  # 满足筛查条件
 						display(dic_info, keys_lis=keys_lis, value=v)
 				elif lis[2] == '<':
 					if int(data_value) - int(lis[3]) < 0:
 						display(dic_info, keys_lis=keys_lis, value=v)
 				# 待开发
 				elif lis[2] == '>=':
-					if int(data_value)-int(lis[3]) >= 0:  # 满足筛查条件
+					if int(data_value) - int(lis[3]) >= 0:  # 满足筛查条件
 						display(dic_info, keys_lis=keys_lis, value=v)
 				elif lis[2] == '<=':
 					if int(data_value) - int(lis[3]) <= 0:
@@ -225,10 +227,10 @@ def compare_str(lis, dic_info, keys_lis=None):
 					# print(str)
 					if data_value == str:
 						display(dic_info, keys_lis=keys_lis, value=v)
-						date_lis.append(v)
-		return date_lis
-	
-	
+						value_lis.append(v)
+		return value_lis
+
+
 def wipe_mark(str):
 	"""
 	将字符串的双引号，或单引号去除
@@ -264,13 +266,12 @@ def read_user_data():
 	:return: dic_info
 	'''
 	dic_info = {}  # 以字典的形式保存用户信息
-	# colume_lis = ['id', 'name', 'age', 'phone', 'enroll_dept', 'date']  # 字段列表
-	with open('staff_table', 'r', encoding='utf-8') as f:
-		line = f.readlines()
-		for i in line:
-			value = i.strip().split(',')
-			dic_info[value[0]] = {x: y for x, y in zip(colume_lis, value)}
-		# print(dic_info)
+	# with open('staff_table', 'r', encoding='utf-8') as f:
+	f = open_file('r')
+	line = f.readlines()
+	for i in line:
+		value = i.strip().split(',')
+		dic_info[value[0]] = {x: y for x, y in zip(colume_lis, value)}
 	return dic_info
 
 
@@ -279,20 +280,24 @@ def add_data(str):
 	新增数据
 	:return:
 	'''
-	with open('staff_table', 'a', encoding='utf-8') as f:
-		f.write(str)
-		f.flush()
+	# with open('staff_table', 'a', encoding='utf-8') as f:
+	f = open_file('a')
+	f.write(str)
+	f.flush()
+	f.close()
 
-	
+
 def del_data(key):
-	with open('staff_table', 'r', encoding='utf-8') as f:
-		with open('staff_table_new', 'w', encoding='utf-8')as f2:
-			for line in f:
-				lis = line.split(',')
-				if lis[0] == key:
-					pass
-				else:
-					f2.write(line)
+	f = open_file('r')
+	f2 = open_file('w')
+	for line in f:
+		lis = line.split(',')
+		if lis[0] == key:
+			pass
+		else:
+			f2.write(line)
+	f2.close()
+	f.close()
 	os.replace('staff_table_new', 'staff_table')
 
 
@@ -310,30 +315,29 @@ def filter_key(keys, dic_info):
 			for i in keys:
 				dic[i] = v[i]
 			return dic
+		
 		ret = inter(v)
 		lis.append(ret)
 	return lis  # 返回筛选字段组成的字典的列表类型
 
 
-def deal_with_user_in(str):
+def deal_with_user_in(user_in_str):
 	'''
 	处理输入字符串最后的元素包含空格符情况
-	:param str: 用户输入字符串
-	:return: 保留最后一个空格的字符串
+	:param user_in_str: 用户输入字符串
+	:return: list tpye 保留最后一个空格的的列表或者用户输入命令切割列表
 	'''
-	# print(str)
-	str = str.strip()  # 去除两边空白
-	space_num = str.count(' ')  # 统计空格次数
-	if 'where' in str:
-		where_index = str.index('where')
-		if 'name' in str[where_index:]:
-			str = str.split(' ', space_num-1)
-		else:
-			str = str.split(' ')
-		return str
+	# print(user_in_str) # test
+	user_in_str = user_in_str.strip()  # 去除两边空白
+	space_num = user_in_str.count(' ')  # 统计空格次数
+	if 'where' in user_in_str:
+		where_index =user_in_str.index('where')
+		# return user_in_str.split(' ')
+		if 'name' in user_in_str[where_index:]:
+			user_in_str_list = user_in_str.split(' ', space_num - 1)
+			return user_in_str_list
 	else:
-		str = str.split(' ')
-		return str
+		return user_in_str.split(' ')
 
 
 def display(dic_info, keys_lis=None, value=None):
@@ -348,12 +352,12 @@ def display(dic_info, keys_lis=None, value=None):
 		for k, value in dic_info.items():
 			print(k, value, end=' ')  # 显示数据，每个数据间隔一个空格
 		print()
-		
+	
 	if keys_lis:
 		for i in keys_lis:
 			print(i, value[i], end=' ')
 		print()
-	
+		
 
 def verify_phone(lis):
 	'''
@@ -367,7 +371,16 @@ def verify_phone(lis):
 			return False
 	else:
 		return True
-	
+
+
+def open_file(mode):
+	if mode == 'w':
+		file_name = 'staff_table_new'
+	else:
+		file_name = 'staff_table'
+	f = open(file_name, mode,encoding='utf-8')
+	return f
+
 
 def run():
 	'''
@@ -378,5 +391,3 @@ def run():
 
 
 run()
-
-

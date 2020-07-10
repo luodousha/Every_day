@@ -124,17 +124,19 @@
 # print(l)
 # for i  in l :
 # 	print(i)
-s='update staff_table set age=25 where name = "Alex Li"'
-s = 'find * from staff_table where age > 22'
+s="find * form staff_table  where name = 'Alex Li'"
+# s = 'find * from staff_table where age > 22'
 
-print(s.index('where'))
-print(s[30:])
-if 'name' in s[30:]:
-	l = s.split(' ', s.count(' ') - 1)
-	# print(l)
-else:
-	l = s.split(' ')
-print(l)
+# print(s.index('where'))
+# print(s[30:])
+# if 'name' in s[30:]:
+# 	l = s.split(' ', s.count(' ') - 1)
+# 	# print(l)
+# else:
+# 	l = s.split(' ')
+# print(l)
 
 
 # find * from staff_table where dept = "IT"
+
+print(s.split())
