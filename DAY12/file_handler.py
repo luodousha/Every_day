@@ -101,19 +101,21 @@ def update_user(*args,**kwargs):
 	old_str = wipe_mark(kwargs['str_lis'][-1])
 	# print(new_str, old_str)
 	lis_ = kwargs['str_lis'][index_where:]
+	print(lis_)
 	ret = compare_str(lis_, dis_info)  # 符合查询条件的数据集合
 	with open('staff_table', 'r', encoding='utf-8')as f:
 		with open('staff_table_new', 'w', encoding='utf-8')as f2:
 			for line in f:
 				line = line.strip()
 				for v in ret:
-					if v[alter] in line:
+					if v[alter] == wipe_mark(lis_[-1]):
 						v[alter] = new_str
 						s = ','.join(v.values())
 						line = line.replace(line, s)
-				else:
-					line = line
+						f2.write(line+'\n')
+			else:
 				f2.write(line+'\n')
+				# f2.write(line+'\n')
 				
 	# os.replace('staff_table_new','staff_table')
 	
@@ -152,7 +154,7 @@ def find_user_info(*args,**kwargs):
 			compare_str(lis_, dic_info, keys_lis=keys)  # 这里要写一个判断的函数将筛查条件传入
 			
 		
-def compare_str(lis, dic_info, keys_lis=None):
+def compare_str(lis, dic_info,keys_lis=None):
 	'''
 	判断where 条件
 	:param lis: 筛查条件列表 例如['where' , 'age' , '>' ,'26' ]
@@ -353,7 +355,7 @@ def display(dic_info, keys_lis=None, value=None):
 		for i in keys_lis:
 			print(i, value[i], end=' ')
 		print()
-	
+
 
 def verify_phone(lis):
 	'''

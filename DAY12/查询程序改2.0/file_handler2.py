@@ -16,7 +16,6 @@ def check_user_in():
 		# print(user_in_str)  #测试 user_in_str 字符串
 		keywords_str = user_in_str.strip()
 		keywords_list = deal_with_user_in(keywords_str)
-		# print(keywords_list)
 		# print(keywords_list)  # test 测试 用户关键字列表
 		if not user_in.strip():
 			print('不允许输入空值')
@@ -86,46 +85,48 @@ def del_user(*args, **kwargs):
 
 def update_user(*args, **kwargs):
 	'''
-	可以根据特殊条件修改员工信息
+	可以根据特殊条件修改，替换员工信息
 	:return:
 	'''
 	dis_info = read_user_data()
 	# print('修改属性')
-	# print(kwargs['str_lis'])
 	index_where = kwargs['str_lis'].index('where')
 	index_set = kwargs['str_lis'].index('set')
-	# print(index_set)
 	alter_lis = kwargs['str_lis'][index_set + 1].split('=')  # 获取修改参数的下标
 	new_str = wipe_mark(alter_lis[1])  # 修改后的数据
 	alter = wipe_mark(alter_lis[0])  # 需要修改的字段
-	# print(alter)
-	old_str = wipe_mark(kwargs['str_lis'][-1])  # 要修改的数据
-	# print(new_str, old_str)
 	lis_ = kwargs['str_lis'][index_where:]
 	ret = compare_str(lis_, dis_info)
-	# with open('staff_table', 'r', encoding='utf-8')as f:
-	f = open_file('r')
+	for v in ret:
+		old_str = v.get(alter)
+		# print(old_str)
+		replace_str(old_str, new_str)
+	os.replace('staff_table_new', 'staff_table')
+	
+	
+def replace_str(old_str,new_str):
+	'''
+	替换字符串
+	:param old_str: str 被替换的字符串
+	:param new_str:str  替换的字符串
+	:return:
+	'''
+	f  = open_file('r')
 	f2 = open_file('w')
 	for line in f:
-		line = line.strip()
-		for v in ret:
-			if v[alter] in line:
-				v[alter] = new_str
-				s = ','.join(v.values())
-				line = line.replace(line, s)
-		else:
-			line = line
-		f2.write(line + '\n')
+		# print(line)
+		if old_str in line.split(','): # 这里分割避免字符串包含替换内容的情况
+			line=line.replace(old_str,new_str)
+		f2.write(line)
 	f2.close()
 	f.close()
-	# os.replace('staff_table_new', 'staff_table') # 将新文件文件名修改为原文件
 
-
+	
 def find_user_info(*args, **kwargs):
 	'''
 	查询用户输入
 	:param args:
-	:param kwargs:
+	:param kwargs:切割处理后的用户关键字输入列表
 	:return:
 	'''
 	# print(kwargs)  # test接收用户的输入
@@ -151,29 +152,26 @@ def find_user_info(*args, **kwargs):
 		elif 'where' in kwargs['str_lis']:  # 有参数列表有筛查条件
 			index = kwargs['str_lis'].index('where')  # 切割'where'至筛查条件
 			lis_ = kwargs['str_lis'][index:]  # ['where', 'age', '>', '26']
-			# print(keys)
 			compare_str(lis_, dic_info, keys_lis=keys)  # 这里要写一个判断的函数将筛查条件传入
-
+	
 
 def compare_str(lis, dic_info, keys_lis=None):
 	'''
 	判断where 条件
 	:param lis: 筛查条件列表 例如['where' , 'age' , '>' ,'26' ]
-	:param dic_info: 所有数据字典格式
-	:param keys_lis: 筛查所需字段的列表
-	:return: 返回筛查字典
+	:param dic_info: 所有数据的字典类型
+	:param keys_lis: 筛查需要显示字段的列表
+	:return: 返回满足筛查条件的字典元素列表
 	'''
-	value_lis = []
-	if keys_lis == None:  # 判断有没有过滤字段
+	value_lis = [] # 用来储存满足条件的字典对象
+	if keys_lis == None:  # 没有过滤字段的情况
 		for v in dic_info.values():
-			data_value = v.get(lis[1])  # 获取关键字
+			data_value = v.get(lis[1])  # 获取筛选关键字
 			# print(data_value)
 			if 'like' in lis:  # 判断是否是有关键字'like'
-				# print('模糊查询...')
 				if wipe_mark(lis[3]) in data_value:  # 将双引号，单引号去除
 					display(v)
-			elif data_value.isdigit():  # 数据类型是数字字符串的时候
-				
+			elif data_value.isdigit():  # 字段的数据类型是数字字符串的时候 例如age.id
 				if lis[2] == '>':
 					if int(data_value) - int(lis[3]) > 0:  # 满足筛查条件
 						display(v)
@@ -193,27 +191,25 @@ def compare_str(lis, dic_info, keys_lis=None):
 			elif lis[1].isalpha():  # 判断字符串是否是一至的情况
 				if lis[2] == '=':
 					str = wipe_mark(lis[3])  # 将双引号，或是单引号去掉
-					# str = wipe_mark(str)    # 例如"'Alex Li'" 有两层单双引号，都将其去除
-					# print(str)
+					# str = wipe_mark(str)
 					if data_value == str:
 						display(v)
 						value_lis.append(v)  # 将符合条件的数据添加到列表中
 		return value_lis  # 返回字符串一至的所有数据 比如返回 部门都是'IT'
 	
-	if keys_lis:  # 判断有没有关键字列表,只显示关键字字段 如只显示 name,age 字段内容
+	if keys_lis:   # 有关键字列表,只显示关键字字段 如只显示 name,age 字段内容
 		for v in dic_info.values():
 			data_value = v.get(lis[1])
 			if 'like' in lis:
 				if wipe_mark(lis[3]) in data_value:
 					display(dic_info, keys_lis=keys_lis, value=v)
-			elif data_value.isdigit():  # 数据类型是数字字符串的时候
+			elif data_value.isdigit():  # 字段数据类型是数字字符串的时候
 				if lis[2] == '>':
 					if int(data_value) - int(lis[3]) > 0:  # 满足筛查条件
 						display(dic_info, keys_lis=keys_lis, value=v)
 				elif lis[2] == '<':
 					if int(data_value) - int(lis[3]) < 0:
 						display(dic_info, keys_lis=keys_lis, value=v)
-				# 待开发
 				elif lis[2] == '>=':
 					if int(data_value) - int(lis[3]) >= 0:  # 满足筛查条件
 						display(dic_info, keys_lis=keys_lis, value=v)
@@ -221,10 +217,8 @@ def compare_str(lis, dic_info, keys_lis=None):
 					if int(data_value) - int(lis[3]) <= 0:
 						display(dic_info, keys_lis=keys_lis, value=v)
 			elif lis[1].isalpha():  # 判断字符串是否是一至的情况
-				# print(lis)
 				if lis[2] == '=':
 					str = wipe_mark(lis[3])  # 将双引号，或是单引号去掉
-					# print(str)
 					if data_value == str:
 						display(dic_info, keys_lis=keys_lis, value=v)
 						value_lis.append(v)
@@ -332,10 +326,10 @@ def deal_with_user_in(user_in_str):
 	space_num = user_in_str.count(' ')  # 统计空格次数
 	if 'where' in user_in_str:
 		where_index =user_in_str.index('where')
-		# return user_in_str.split(' ')
 		if 'name' in user_in_str[where_index:]:
 			user_in_str_list = user_in_str.split(' ', space_num - 1)
 			return user_in_str_list
+		return user_in_str.split(' ')
 	else:
 		return user_in_str.split(' ')
 
