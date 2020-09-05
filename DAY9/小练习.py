@@ -1,6 +1,6 @@
 #  1.根据下图所示，对print_info里的代码进行实现
 # def print_info(*args,**kwargs):
-# 		print('-----info------')
+# 		print('-----user_info------')
 # 		kwargs['hobbie'] = '大保健'
 # 		msg = f'''Name:{kwargs['name']}
 # Age :{kwargs['age']}

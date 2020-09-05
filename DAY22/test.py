@@ -169,12 +169,12 @@ def index(num,**kwargs):
 # 8、内置方法考察 zip filter map。。。。
 # zip(可迭代对象)
 #返回一个zip对象
-k = [1,2,3,4]
-v = [4,5,6,7]
-z=zip(k)
-print(list(z))
-for i in z:
-	print(i)
+# k = [1,2,3,4]
+# v = [4,5,6,7]
+# z=zip(k)
+# print(list(z))
+# for i in z:
+# 	print(i)
 #可以通过* 解压
 # a,b= zip(k,v)
 
